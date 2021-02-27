@@ -82,7 +82,7 @@ app.use((req, res, next) => {
   // res.header("Access-Control-Allow-Origin", "https://readwithmev1.herokuapp.com");
   // res.setHeader("Access-Control-Allow-Origin", "https://readwithmev1.herokuapp.com");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", "sayem-nextjs-vercel-m51yjl71o-cardoso-topdev.vercel.app");
   res.setHeader("Access-Control-Allow-Credentials", true);
   res.setHeader(
     "Access-Control-Allow-Methods",
