@@ -1,0 +1,17 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: "4c66f7a0-7c68-4d5d-b93f-219bcc514989"
+          heroku_app_name: "sayem-node-server" #Must be unique in Heroku
+          heroku_email: "oscar@cardoso-devstar.com"
