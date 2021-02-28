@@ -185,10 +185,12 @@ const login = async (req, res, next) => {
         maxAge: maxAge,
         domain: process.env.DOMAIN,
     })
+    console.log("==== Cookie =======")
     res.cookie("token", token, cookieConfig);
     res.cookie("userId", user._id.toString(), cookieConfig);
     res.cookie("userName", user.name, cookieConfig);
-
+    console.log("==== end =======")
+    
     res.status(201).json({
       message: "User successfully logged in.",
       token: token,
