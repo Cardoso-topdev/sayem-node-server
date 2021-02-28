@@ -10,7 +10,7 @@ dotenv.config();
 
 const pagesRoutes = require("./routes/pages");
 const usersRoutes = require("./routes/users");
-// var cors = require("cors");
+var cors = require("cors");
 
 // Configuration where images should be stored and named
 const fileStorage = multer.diskStorage({
@@ -60,7 +60,6 @@ const app = express();
 
 // const __dirname = path.resolve()
 
-app.set('trust proxy', 1)
 app.use(cors());
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
@@ -71,6 +70,7 @@ app.use(function (req, res, next) {
   console.log("=======================");
   next()
 })
+app.set('trust proxy', 1)
 
 app.use((req, res, next) => {
   const allowedOrigins = ['https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app', 
