@@ -79,10 +79,15 @@ app.use(function (req, res, next) {
 })
 
 app.use((req, res, next) => {
-  // res.header("Access-Control-Allow-Origin", "https://readwithmev1.herokuapp.com");
-  // res.setHeader("Access-Control-Allow-Origin", "https://readwithmev1.herokuapp.com");
+  const allowedOrigins = ['https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app', 'http://localhost:3000'];
+  const origin = req.headers.origin;
+  console.log("++++++++++++++++++++++++")
+  console.log("ORIGIN: ", origin)
+  console.log("++++++++++++++++++++++++");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Allow-Origin", "https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app");
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader("Access-Control-Allow-Credentials", true);
   res.setHeader(
     "Access-Control-Allow-Methods",
