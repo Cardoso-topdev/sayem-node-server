@@ -60,7 +60,8 @@ const app = express();
 
 // const __dirname = path.resolve()
 
-app.use(cors());
+app.set('trust proxy', 1)
+// app.use(cors());
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
   console.log("=======================");
@@ -70,7 +71,6 @@ app.use(function (req, res, next) {
   console.log("=======================");
   next()
 })
-app.set('trust proxy', 1)
 
 app.use((req, res, next) => {
   const allowedOrigins = ['https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app', 
