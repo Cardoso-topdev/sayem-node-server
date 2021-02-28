@@ -180,9 +180,14 @@ const login = async (req, res, next) => {
     );
     // Set cookie in the browser to store authentication state
     const maxAge = 1000 * 60 * 60; // 1 hour
-    res.cookie("token", token);
-    res.cookie("userId", user._id.toString());
-    res.cookie("userName", user.name);
+    let cookieConfig = ({
+        httpOnly: true,
+        maxAge: maxAge,
+        domain: process.env.DOMAIN,
+    })
+    res.cookie("token", token, cookieConfig);
+    res.cookie("userId", user._id.toString(), cookieConfig);
+    res.cookie("userName", user.name, cookieConfig);
 
     res.status(201).json({
       message: "User successfully logged in.",
