@@ -79,7 +79,9 @@ app.use(function (req, res, next) {
 })
 
 app.use((req, res, next) => {
-  const allowedOrigins = ['https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app', 'http://localhost:3000'];
+  const allowedOrigins = ['https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app', 
+                          'http://localhost:3000',
+                          'https://sayem-nextjs-vercel.vercel.app'];
   const origin = req.headers.origin;
   console.log("++++++++++++++++++++++++")
   console.log("ORIGIN: ", origin)
