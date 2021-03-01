@@ -9,6 +9,7 @@ module.exports = (req, res, next) => {
   let { authorization } = req.headers;
   if ( authorization){
     let _token = authorization.split(" ")[1];
+    console.log("token: ", _token);
     const { userId } = jwt.verify(_token, process.env.JWT_KEY);
     console.log(userId);
     req.body.userId = userId;

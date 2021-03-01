@@ -55,6 +55,12 @@ router.put("/account/inbox", isAuth, usersController.updateInbox);
 // PUT /users/account
 router.put("/account", isAuth, usersController.updateUser);
 
+// POST /users/follow
+router.post("/follow", usersController.followUser);
+
+// POST /users/follow
+router.post("/saveBioText", usersController.saveBioText);
+
 // POST /users/resetToken
 router.post("/resetToken", [emailValidator], usersController.getResetToken);
 
@@ -67,11 +73,5 @@ router.post(
 
 // POST /users/activate
 router.post("/activate", usersController.activateAccount);
-
-// POST /users/follow
-router.post("/follow", isAuth, usersController.followUser);
-
-// POST /users/follow
-router.post("/saveBioText", usersController.saveBioText);
 
 module.exports = router;

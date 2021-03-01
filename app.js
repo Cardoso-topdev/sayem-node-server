@@ -58,11 +58,13 @@ const fileFilter = (req, file, cb) => {
 
 const app = express();
 
+app.use(cors())
 // const __dirname = path.resolve()
-
+// app.options('*', cors());
 app.set('trust proxy', 1)
-// app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
+
 app.use(function (req, res, next) {
   console.log("=======================");
   console.log(req.url) // populated!
@@ -72,28 +74,32 @@ app.use(function (req, res, next) {
   next()
 })
 
-app.use((req, res, next) => {
-  const allowedOrigins = ['https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app', 
-                          'http://localhost:3000',
-                          'https://sayem-nextjs-vercel.vercel.app'];
-  const origin = req.headers.origin;
-  console.log("++++++++++++++++++++++++")
-  console.log("ORIGIN: ", origin)
-  console.log("++++++++++++++++++++++++");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+const whitelist = ['https://sayem-nextjs-vercel-j9eken4mc-cardoso-topdev.vercel.app', 
+                        'http://localhost:3000',
+                        'https://sayem-nextjs-vercel.vercel.app'];
+let corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
   }
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, DELETE"
-  );
-  next();
-});
+}
 
-app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use((req, res, next) => {
+//   const origin = req.headers.origin;
+//   console.log("++++++++++++++++++++++++")
+//   console.log("ORIGIN: ", origin)
+//   console.log("++++++++++++++++++++++++");
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+//   if (whitelist.includes(origin)) {
+//     res.setHeader('Access-Control-Allow-Origin', origin);
+//   }
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+//   res.setHeader("Access-Control-Allow-Methods","GET, POST, OPTIONS, PUT, DELETE");
+//   next();
+// });
 
 app.use(
   multer({
@@ -104,8 +110,8 @@ app.use(
 );
 
 app.use("/images", express.static(path.join(__dirname, "images")));
-app.use("/pages", pagesRoutes);
-app.use("/users", usersRoutes);
+app.use("/pages", pagesRoutes);//cors(corsOptions),
+app.use("/users", usersRoutes);//cors(corsOptions),
 
 // Error Handling
 app.use((err, req, res, next) => {

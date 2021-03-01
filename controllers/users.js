@@ -88,15 +88,11 @@ const signup = async (req, res, next) => {
       process.env.JWT_KEY
     );
 
-    // Set cookie in the browser to store authentication state
-    const maxAge = 1000 * 60 * 60; // * 60 * 24 * 3; // 3 days
-    res.cookie("token", token);
-    res.cookie("userId", user._id.toString());
-    res.cookie("userName", user.name);
-
     res.status(201).json({
       message: "User successfully created.",
       userId: savedUser._id,
+      userName: savedUser.name,
+      token: token
     });
   } catch (err) {
     next(err);
@@ -105,43 +101,41 @@ const signup = async (req, res, next) => {
 
 const googlogin = async (req, res, next) => {
   try {
-    const email = req.body.email;
-    const uid = req.body.uid;
+    let email = req.body.email;
+    let uid = req.body.uid;
+    let name = req.body.name;
     
-    const hashedPassword = await bcrypt.hash(uid, 12);
-    const activationToken = (await promisify(randomBytes)(20)).toString("hex");
-    const savedUser = await User.findOne({ email: email });
+    let hashedPassword = await bcrypt.hash(uid, 12);
+    let activationToken = (await promisify(randomBytes)(20)).toString("hex");
+    let savedUser = await User.findOne({ email: email });
     
     if (!savedUser) {
       savedUser = new User({
         email: email,
         password: hashedPassword,
-        name: email,
+        name: name,
         bio: "Hi there!",
         activationToken: activationToken,
       });
+      savedUser.save();
     } else {
-      const isEqual = await bcrypt.compare(uid, savedUser.password)
+      let isEqual = await bcrypt.compare(uid, savedUser.password)
       if (!isEqual) {
-        const err = new Error("Could not authenticate.");
+        let err = new Error("Could not authenticate.");
         err.statusCode = 401;
         throw err;
       }
     }
-    const token = jwt.sign(
+    let token = jwt.sign(
       { userId: savedUser._id.toString() },
       process.env.JWT_KEY
     );
-    // Set cookie in the browser to store authentication state
-    const maxAge = 1000 * 60 * 60; // 1 hour
-    res.cookie("token", token);
-    res.cookie("userId", savedUser._id.toString());
-    res.cookie("userName", savedUser.name);
 
     res.status(201).json({
       message: "User successfully logged in.",
       token: token,
       userId: savedUser._id.toString(),
+      userName:savedUser.name
     });
   } catch (err) {
     next(err);
@@ -178,20 +172,6 @@ const login = async (req, res, next) => {
       { userId: user._id.toString() },
       process.env.JWT_KEY
     );
-    // Set cookie in the browser to store authentication state
-    const maxAge = 1000 * 60 * 60; // 1 hour
-    let cookieConfig = ({
-        httpOnly: true,
-        maxAge: maxAge,
-        secure: true
-        // domain: process.env.DOMAIN,
-    })
-    console.log("==== Cookie =======")
-    res.cookie("token", token, cookieConfig);
-    res.cookie("userId", user._id.toString(), cookieConfig);
-    res.cookie("userName", user.name, cookieConfig);
-    console.log("==== end =======")
-
     res.status(201).json({
       message: "User successfully logged in.",
       token: token,
@@ -204,21 +184,19 @@ const login = async (req, res, next) => {
 };
 
 const logout = (req, res, next) => {
-  const userId = req.body.userId;
   try {
+    const userId = req.body.userId;
     if (!userId) {
       console.log("no userId")
       const err = new Error("User is not authenticated.");
       err.statusCode = 401;
       throw err;
     }
-    res.clearCookie("token");
-    res.clearCookie("userId");
-    res.clearCookie("userName");
+
     req.session = null
     res.status(200).json({
       message: "User successfully logged out.",
-      userId: userId,
+      // userId: userId,
     });
   } catch (err) {
     next(err);
@@ -259,7 +237,6 @@ const getUserList = async (req, res, next) => {
 };
 
 const updateUser = async (req, res, next) => {
-  console.log("UPDATE USER CALLED", req.body);
   const userId = req.body.userId;
   const name = req.body.name;
   const email = req.body.email;
@@ -287,7 +264,7 @@ const updateUser = async (req, res, next) => {
     res.status(201).json({
       message: "User successfully updated.",
       userId: savedUser._id.toString(),
-      name: savedUser.name,
+      userName: savedUser.name,
       email: savedUser.email,
     });
   } catch (err) {
@@ -396,13 +373,6 @@ const resetPassword = async (req, res, next) => {
       process.env.JWT_KEY
     );
 
-    const maxAge = 1000 * 60 * 60; // 1 hour
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: maxAge,
-      domain: process.env.DOMAIN,
-    });
-
     res.status(201).json({
       message: "Password successfully changed.",
       token: token,
@@ -472,8 +442,8 @@ const followUser = async (req, res, next) => {
 
 const saveBioText = async (req, res, next) => {
   const userId = req.body.userId;
+  console.log(userId)
   const bioText = req.body.bioText;
-
   try {
     const user = await User.findOne({
       _id: userId,
