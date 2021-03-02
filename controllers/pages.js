@@ -6,7 +6,7 @@ const Page = require("../models/page");
 const User = require("../models/user");
 
 const getPages = async (req, res, next) => {
-  const userId = req.userId;
+  const userId = req.body.userId;
 
   try {
     if (!userId) {
@@ -82,7 +82,6 @@ const getMetaData = async (req, res, next) => {
 
 // get a page that already exists
 const getPage = async (req, res, next) => {
-  let userId = req.userId;
   const pageId = req.params.pageId;
   let creatorId;
   try {
@@ -99,10 +98,10 @@ const getPage = async (req, res, next) => {
       creatorId = null;
     }
 
-      res.status(200).json({
-        message: "Fetched page successfully.",
-        page: page,
-      });
+    res.status(200).json({
+      message: "Fetched page successfully.",
+      page: page,
+    });
   } catch (err) {
     next(err);
   }
@@ -217,7 +216,7 @@ const putPage = async (req, res, next) => {
 };
 
 const deletePage = async (req, res, next) => {
-  const userId = req.userId;
+  const userId = req.body.userId;
   const pageId = req.params.pageId;
   try {
     const page = await Page.findById(pageId);

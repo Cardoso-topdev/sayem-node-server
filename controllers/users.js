@@ -204,7 +204,7 @@ const logout = (req, res, next) => {
 };
 
 const getUser = async (req, res, next) => {
-  const userId = req.query.userId;
+  const userId = (req.query.userId) ? req.query.userId : req.body.userId;
 
   try {
     const user = await User.findById(userId);
