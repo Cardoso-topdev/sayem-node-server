@@ -294,6 +294,7 @@ const updateInbox = async (req, res, next) => {
       blocks: savedUser.blocks,
     });
   } catch (err) {
+    console.log("UPDATE INBOX ERR: ", err)
     next(err);
   }
 };
